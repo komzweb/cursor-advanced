@@ -1,101 +1,125 @@
-import Image from "next/image";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { PlayCircle, ShoppingCart } from "lucide-react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const videos = [
+    {
+      id: 1,
+      title: "プログラミング入門",
+      description:
+        "プログラミングの基礎を学び、簡単なアプリケーションを作成する方法を習得します。",
+      price: 5000,
+    },
+    {
+      id: 2,
+      title: "データサイエンス基礎",
+      description:
+        "データ分析の基本概念と手法を学び、実際のデータセットを使って実践的なスキルを身につけます。",
+      price: 7000,
+    },
+    {
+      id: 3,
+      title: "ウェブデザイン実践",
+      description:
+        "最新のウェブデザインのトレンドと技術を学び、魅力的なウェブサイトを作成するスキルを習得します。",
+      price: 6000,
+    },
+  ];
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6">TechTube</h1>
+
+      <Tabs defaultValue="browse" className="mb-6">
+        <TabsList>
+          <TabsTrigger value="browse">動画一覧</TabsTrigger>
+          <TabsTrigger value="create">動画作成</TabsTrigger>
+          <TabsTrigger value="my-videos">マイ動画</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="browse">
+          <div className="mb-4">
+            <Input type="text" placeholder="動画を検索..." className="w-full" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {videos.map((video) => (
+              <Card key={video.id}>
+                <CardHeader>
+                  <CardTitle>{video.title}</CardTitle>
+                  <CardDescription>{video.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p>価格: {video.price}円</p>
+                </CardContent>
+                <CardFooter>
+                  <Button className="w-full">
+                    <ShoppingCart className="mr-2 h-4 w-4" /> 購入する
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="create">
+          <Card>
+            <CardHeader>
+              <CardTitle>新しい動画を作成</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form>
+                <div className="grid w-full items-center gap-4">
+                  <div className="flex flex-col space-y-1.5">
+                    <Input id="title" placeholder="動画タイトル" />
+                  </div>
+                  <div className="flex flex-col space-y-1.5">
+                    <Input id="description" placeholder="動画説明" />
+                  </div>
+                  <div className="flex flex-col space-y-1.5">
+                    <Input id="price" type="number" placeholder="価格" />
+                  </div>
+                </div>
+              </form>
+            </CardContent>
+            <CardFooter>
+              <Button>動画を公開</Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="my-videos">
+          <h2 className="text-2xl font-semibold mb-4">受講中の動画</h2>
+          <div className="space-y-4">
+            {videos.slice(0, 2).map((video) => (
+              <Card key={video.id}>
+                <CardHeader>
+                  <CardTitle>{video.title}</CardTitle>
+                  <CardDescription>{video.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <progress value="60" max="100" className="w-full" />
+                  <p className="text-sm text-gray-500 mt-2">進捗: 60%</p>
+                </CardContent>
+                <CardFooter>
+                  <Button>
+                    <PlayCircle className="mr-2 h-4 w-4" /> 続きから学習
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
