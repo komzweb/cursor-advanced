@@ -11,8 +11,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { PlayCircle, ShoppingCart } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const videos = [
     {
       id: 1,
@@ -42,9 +48,15 @@ export default function Home() {
       <header className="bg-white shadow-sm">
         <div className="container mx-auto p-4 flex justify-between items-center">
           <h1 className="text-3xl font-bold">TechTube</h1>
-          <Link href="/login">
-            <Button>ログイン</Button>
-          </Link>
+          {user ? (
+            <Link href="/private">
+              <Button variant="outline">{user.email}</Button>
+            </Link>
+          ) : (
+            <Link href="/login">
+              <Button>ログイン</Button>
+            </Link>
+          )}
         </div>
       </header>
       <div className="container mx-auto p-4">

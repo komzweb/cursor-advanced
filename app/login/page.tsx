@@ -16,20 +16,24 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Github } from "lucide-react";
 import Link from "next/link";
+import { login } from "@/lib/actions/login";
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleEmailLogin = (e) => {
-    e.preventDefault();
+  const handleEmailLogin = async (formData: FormData) => {
     setIsLoading(true);
-    // ここに実際のログインロジックを実装
-    setTimeout(() => {
+    setError("");
+    try {
+      await login(formData);
+    } catch (error) {
+      setError(
+        "ログインに失敗しました。メールアドレスまたはパスワードを確認してください。"
+      );
+    } finally {
       setIsLoading(false);
-      // エラーの例
-      setError("メールアドレスまたはパスワードが正しくありません。");
-    }, 1000);
+    }
   };
 
   const handleGithubLogin = () => {
@@ -55,11 +59,12 @@ const LoginPage = () => {
             </Alert>
           )}
 
-          <form onSubmit={handleEmailLogin} className="space-y-4">
+          <form action={handleEmailLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">メールアドレス</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="your@email.com"
                 required
@@ -75,6 +80,7 @@ const LoginPage = () => {
               </div>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 required
                 disabled={isLoading}

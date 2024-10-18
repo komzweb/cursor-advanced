@@ -16,30 +16,27 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Github } from "lucide-react";
 import Link from "next/link";
+import { signup } from "@/lib/actions/signup";
 
 const SignupPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
 
-  const handleEmailSignup = (e) => {
-    e.preventDefault();
+  const handleEmailSignup = async (formData: FormData) => {
     setIsLoading(true);
+    setError("");
+    try {
+      await signup(formData);
+    } catch (error) {
+      setError("アカウント作成に失敗しました。入力内容を確認してください。");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGithubSignup = () => {
     setIsLoading(true);
     // GitHub認証ロジックをここに実装
-  };
-
-  const handleInputChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.id]: e.target.value,
-    });
   };
 
   return (
@@ -60,17 +57,16 @@ const SignupPage = () => {
             </Alert>
           )}
 
-          <form onSubmit={handleEmailSignup} className="space-y-4">
+          <form action={handleEmailSignup} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">メールアドレス</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="your@email.com"
                 required
                 disabled={isLoading}
-                value={form.email}
-                onChange={handleInputChange}
               />
             </div>
 
@@ -78,11 +74,10 @@ const SignupPage = () => {
               <Label htmlFor="password">パスワード</Label>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 required
                 disabled={isLoading}
-                value={form.password}
-                onChange={handleInputChange}
               />
               <p className="text-sm text-gray-500">
                 8文字以上で、英字、数字を含める必要があります
