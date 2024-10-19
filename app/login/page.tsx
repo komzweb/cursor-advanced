@@ -17,6 +17,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Github } from "lucide-react";
 import Link from "next/link";
 import { login } from "@/lib/actions/login";
+import { createClient } from "@/lib/supabase/client";
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,9 +37,22 @@ const LoginPage = () => {
     }
   };
 
-  const handleGithubLogin = () => {
+  const handleGithubLogin = async () => {
     setIsLoading(true);
-    // GitHub認証ロジックをここに実装
+    setError("");
+    const supabase = createClient();
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "github",
+        options: {
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (error) {
+      setError("GitHub認証に失敗しました。もう一度お試しください。");
+      setIsLoading(false);
+    }
   };
 
   return (
