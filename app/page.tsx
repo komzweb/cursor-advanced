@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -12,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { PlayCircle, ShoppingCart, PlusCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import SearchableVideoList from "./components/SearchableVideoList";
 
 export default async function Home() {
   const supabase = createClient();
@@ -61,32 +61,7 @@ export default async function Home() {
           </TabsList>
 
           <TabsContent value="browse">
-            <div className="mb-4">
-              <Input
-                type="text"
-                placeholder="動画を検索..."
-                className="w-full"
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {videos &&
-                videos.map((video) => (
-                  <Card key={video.id}>
-                    <CardHeader>
-                      <CardTitle>{video.title}</CardTitle>
-                      <CardDescription>{video.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p>価格: {video.price}円</p>
-                    </CardContent>
-                    <CardFooter>
-                      <Button className="w-full">
-                        <ShoppingCart className="mr-2 h-4 w-4" /> 購入する
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-            </div>
+            <SearchableVideoList videos={videos || []} />
           </TabsContent>
 
           <TabsContent value="my-videos">
