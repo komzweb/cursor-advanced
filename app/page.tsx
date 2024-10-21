@@ -19,29 +19,15 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const videos = [
-    {
-      id: 1,
-      title: "プログラミング入門",
-      description:
-        "プログラミングの基礎を学び、簡単なアプリケーションを作成する方法を習得します。",
-      price: 5000,
-    },
-    {
-      id: 2,
-      title: "データサイエンス基礎",
-      description:
-        "データ分析の基本概念と手法を学び、実際のデータセットを使って実践的なスキルを身につけます。",
-      price: 7000,
-    },
-    {
-      id: 3,
-      title: "ウェブデザイン実践",
-      description:
-        "最新のウェブデザインのトレンドと技術を学び、魅力的なウェブサイトを作成するスキルを習得します。",
-      price: 6000,
-    },
-  ];
+  // データベースから動画を取得
+  const { data: videos, error } = await supabase
+    .from("videos")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("動画の取得に失敗しました:", error);
+  }
 
   return (
     <div>
@@ -83,45 +69,47 @@ export default async function Home() {
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {videos.map((video) => (
-                <Card key={video.id}>
-                  <CardHeader>
-                    <CardTitle>{video.title}</CardTitle>
-                    <CardDescription>{video.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p>価格: {video.price}円</p>
-                  </CardContent>
-                  <CardFooter>
-                    <Button className="w-full">
-                      <ShoppingCart className="mr-2 h-4 w-4" /> 購入する
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+              {videos &&
+                videos.map((video) => (
+                  <Card key={video.id}>
+                    <CardHeader>
+                      <CardTitle>{video.title}</CardTitle>
+                      <CardDescription>{video.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p>価格: {video.price}円</p>
+                    </CardContent>
+                    <CardFooter>
+                      <Button className="w-full">
+                        <ShoppingCart className="mr-2 h-4 w-4" /> 購入する
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
             </div>
           </TabsContent>
 
           <TabsContent value="my-videos">
             <h2 className="text-2xl font-semibold mb-4">受講中の動画</h2>
             <div className="space-y-4">
-              {videos.slice(0, 2).map((video) => (
-                <Card key={video.id}>
-                  <CardHeader>
-                    <CardTitle>{video.title}</CardTitle>
-                    <CardDescription>{video.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <progress value="60" max="100" className="w-full" />
-                    <p className="text-sm text-gray-500 mt-2">進捗: 60%</p>
-                  </CardContent>
-                  <CardFooter>
-                    <Button>
-                      <PlayCircle className="mr-2 h-4 w-4" /> 続きから学習
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+              {videos &&
+                videos.slice(0, 2).map((video) => (
+                  <Card key={video.id}>
+                    <CardHeader>
+                      <CardTitle>{video.title}</CardTitle>
+                      <CardDescription>{video.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <progress value="60" max="100" className="w-full" />
+                      <p className="text-sm text-gray-500 mt-2">進捗: 60%</p>
+                    </CardContent>
+                    <CardFooter>
+                      <Button>
+                        <PlayCircle className="mr-2 h-4 w-4" /> 続きから学習
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
             </div>
           </TabsContent>
         </Tabs>
