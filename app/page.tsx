@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { PlayCircle, ShoppingCart } from "lucide-react";
+import { PlayCircle, ShoppingCart, PlusCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function Home() {
@@ -48,22 +48,29 @@ export default async function Home() {
       <header className="bg-white shadow-sm">
         <div className="container mx-auto p-4 flex justify-between items-center">
           <h1 className="text-3xl font-bold">TechTube</h1>
-          {user ? (
-            <Link href="/private">
-              <Button variant="outline">{user.email}</Button>
+          <div className="flex space-x-2">
+            <Link href="/new">
+              <Button variant="outline">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                動画作成
+              </Button>
             </Link>
-          ) : (
-            <Link href="/login">
-              <Button>ログイン</Button>
-            </Link>
-          )}
+            {user ? (
+              <Link href="/private">
+                <Button variant="outline">{user.email}</Button>
+              </Link>
+            ) : (
+              <Link href="/login">
+                <Button>ログイン</Button>
+              </Link>
+            )}
+          </div>
         </div>
       </header>
       <div className="container mx-auto p-4">
         <Tabs defaultValue="browse" className="mb-6">
           <TabsList>
             <TabsTrigger value="browse">動画一覧</TabsTrigger>
-            <TabsTrigger value="create">動画作成</TabsTrigger>
             <TabsTrigger value="my-videos">マイ動画</TabsTrigger>
           </TabsList>
 
@@ -93,32 +100,6 @@ export default async function Home() {
                 </Card>
               ))}
             </div>
-          </TabsContent>
-
-          <TabsContent value="create">
-            <Card>
-              <CardHeader>
-                <CardTitle>新しい動画を作成</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form>
-                  <div className="grid w-full items-center gap-4">
-                    <div className="flex flex-col space-y-1.5">
-                      <Input id="title" placeholder="動画タイトル" />
-                    </div>
-                    <div className="flex flex-col space-y-1.5">
-                      <Input id="description" placeholder="動画説明" />
-                    </div>
-                    <div className="flex flex-col space-y-1.5">
-                      <Input id="price" type="number" placeholder="価格" />
-                    </div>
-                  </div>
-                </form>
-              </CardContent>
-              <CardFooter>
-                <Button>動画を公開</Button>
-              </CardFooter>
-            </Card>
           </TabsContent>
 
           <TabsContent value="my-videos">
