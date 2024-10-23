@@ -12,9 +12,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ShoppingCart } from "lucide-react";
+import { createCheckoutSession } from "@/lib/actions/purchase";
 
 type Video = {
-  id: number;
+  id: string;
   title: string;
   description: string;
   price: number;
@@ -35,6 +36,15 @@ export default function SearchableVideoList({
       video.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       video.price.toString().includes(searchTerm)
   );
+
+  const handlePurchase = async (videoId: string) => {
+    try {
+      await createCheckoutSession(videoId);
+    } catch (error) {
+      console.error("購入処理中にエラーが発生しました:", error);
+      alert("購入処理中にエラーが発生しました。もう一度お試しください。");
+    }
+  };
 
   return (
     <div>
@@ -58,7 +68,10 @@ export default function SearchableVideoList({
               <p>価格: {video.price}円</p>
             </CardContent>
             <CardFooter>
-              <Button className="w-full">
+              <Button
+                className="w-full"
+                onClick={() => handlePurchase(video.id)}
+              >
                 <ShoppingCart className="mr-2 h-4 w-4" /> 購入する
               </Button>
             </CardFooter>
