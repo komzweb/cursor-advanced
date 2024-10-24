@@ -19,14 +19,32 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // データベースから動画を取得
-  const { data: videos, error } = await supabase
+  // すべての動画を取得
+  const { data: allVideos, error: allVideosError } = await supabase
     .from("videos")
     .select("*")
     .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("動画の取得に失敗しました:", error);
+  if (allVideosError) {
+    console.error("動画の取得に失敗しました:", allVideosError);
+  }
+
+  // ユーザーが購入した動画を取得
+  let purchasedVideos = [];
+  if (user) {
+    const { data: purchases, error: purchasesError } = await supabase
+      .from("purchases")
+      .select("video_id")
+      .eq("user_id", user.id);
+
+    if (purchasesError) {
+      console.error("購入履歴の取得に失敗しました:", purchasesError);
+    } else {
+      const purchasedVideoIds = purchases.map((purchase) => purchase.video_id);
+      purchasedVideos =
+        allVideos?.filter((video) => purchasedVideoIds.includes(video.id)) ??
+        [];
+    }
   }
 
   return (
@@ -61,30 +79,33 @@ export default async function Home() {
           </TabsList>
 
           <TabsContent value="browse">
-            <SearchableVideoList videos={videos || []} />
+            <SearchableVideoList videos={allVideos || []} />
           </TabsContent>
 
           <TabsContent value="my-videos">
-            <h2 className="text-2xl font-semibold mb-4">受講中の動画</h2>
+            <h2 className="text-2xl font-semibold mb-4">購入済みの動画</h2>
             <div className="space-y-4">
-              {videos &&
-                videos.slice(0, 2).map((video) => (
-                  <Card key={video.id}>
-                    <CardHeader>
-                      <CardTitle>{video.title}</CardTitle>
-                      <CardDescription>{video.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <progress value="60" max="100" className="w-full" />
-                      <p className="text-sm text-gray-500 mt-2">進捗: 60%</p>
-                    </CardContent>
-                    <CardFooter>
+              {purchasedVideos.map((video) => (
+                <Card key={video.id}>
+                  <CardHeader>
+                    <CardTitle>{video.title}</CardTitle>
+                    <CardDescription>{video.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {/* ここに動画の再生進捗などを表示できます */}
+                  </CardContent>
+                  <CardFooter>
+                    <Link href={`/watch/${video.id}`}>
                       <Button>
-                        <PlayCircle className="mr-2 h-4 w-4" /> 続きから学習
+                        <PlayCircle className="mr-2 h-4 w-4" /> 視聴する
                       </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
+                    </Link>
+                  </CardFooter>
+                </Card>
+              ))}
+              {purchasedVideos.length === 0 && (
+                <p>購入済みの動画はありません。</p>
+              )}
             </div>
           </TabsContent>
         </Tabs>
