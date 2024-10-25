@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cursor AI 開発をマスターする！完全ガイド【応用編】
 
-## Getting Started
+[note - Cursor AI 開発をマスターする！完全ガイド【応用編】](https://note.com/komzweb/n/n2679df267e73)
 
-First, run the development server:
+## shadcn/ui
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npx shadcn@latest init
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```bash
+Which style would you like to use? › New York
+Which color would you like to use as base color? › Zinc
+Do you want to use CSS variables for colors? › yes
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+↑ 構成はお好みで
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npx shadcn@latest add tabs
+npx shadcn@latest add button
+npx shadcn@latest add input
+npx shadcn@latest add card
+```
 
-## Learn More
+## Supabase プロジェクト（開発用）
 
-To learn more about Next.js, take a look at the following resources:
+[Supabase ダッシュボード](https://supabase.com/dashboard/projects)で、「**New project**」をクリックする。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Organization**: 組織名を選択（例: `TechTube`）
+- **Project name**: プロジェクト名を入力（例: `TechTube Dev`）
+- **Database Password**: データベースのパスワードを入力（「**Generate a password**」で生成しても良い）
+- **Region**: リージョン（サービス提供エリア）を選択（例: `Northeast Asia (Tokyo)`）
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+「**Create new project**」をクリックして、プロジェクトを作成する。
 
-## Deploy on Vercel
+> 本番用は、別のプロジェクトとして作成する。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## GitHub OAuth アプリケーション（開発用）
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1 . [GitHub](https://github.com/) の **Settings** > **Developer Settings** > **OAuth Apps** で新規作成。
+
+- **Application name**: アプリケーション名を入力（例: `TechTube Dev`）
+- **Homepage URL**: ホームページの URL を入力（例: `http://localhost:3000`）
+- **Authorization callback URL**: 認証コールバック URL を入力（例: `https://<project-ref>.supabase.co/auth/v1/callback`）
+
+> 「**Enable Device Flow**」はチェック不要。
+
+> Callback URL は、Supabase プロジェクト > **Authentication** > **Providers** の **GitHub** を開いてコピーできる。
+
+2 .「**Register application**」をクリックして、アプリケーションを作成する
+
+3 . 作成したアプリケーションの **Client ID** と **Client Secret** をコピーする
+
+4 . Supabase プロジェクト > **Authentication** > **Providers** の **GitHub** に、コピーした情報を設定する
+
+5 .「**GitHub enabled**」をオンにして、「**Save**」をクリックする
+
+> 本番用は、別のアプリケーションとして作成する。
+
+## カスタム SMTP with Resend
+
+1 . [Resend](https://resend.com/) アカウントを作成する
+
+2 . Resend ダッシュボード > **Domains** でドメインを追加する（**独自ドメインが必要**）
+
+3 . Resend ダッシュボード > **API Keys** で API キーを作成する
+
+4 . Supabase プロジェクト > **Project Settings** > **Authentication** > **SMTP Settings** に移動する
+
+4-1 .「**Enable Custom SMTP**」を**オン**にする
+
+4-2 . Resend の SMTP サーバー情報を設定する（[ドキュメント](https://resend.com/docs/send-with-supabase-smtp)）
+
+- **Sender email**: 送信元のメールアドレスを設定（例: `noreply@mail.techtube.com`）
+- **Sender name**: 送信元の表示名を設定（例: `TechTube`）
+- **Host**: `smtp.resend.com`
+- **Port number**: `465`
+- **Username**: `resend`
+- **Password**:（作成した Resend API キー）
+
+4-3 .「**Save**」をクリックして、有効化する
