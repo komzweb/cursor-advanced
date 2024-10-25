@@ -56,11 +56,18 @@ CREATE POLICY "ユーザーは自身の情報のみ更新可能" ON users FOR UP
   USING (auth.uid() = id);
 
 -- 動画テーブルのポリシー
-CREATE POLICY "管理者は全ての動画を閲覧可能" ON videos FOR SELECT
+CREATE POLICY "全てのユーザーが動画の基本情報を閲覧可能" ON videos FOR SELECT
+  USING (true);
+
+CREATE POLICY "管理者は全ての動画情報を閲覧可能" ON videos FOR SELECT
   USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND is_admin = TRUE));
 
-CREATE POLICY "一般ユーザーは購入した動画のみ閲覧可能" ON videos FOR SELECT
-  USING (EXISTS (SELECT 1 FROM purchases WHERE user_id = auth.uid() AND video_id = videos.id));
+CREATE POLICY "購入したユーザーは動画のファイルパスを閲覧可能" ON videos FOR SELECT
+  USING (
+    EXISTS (SELECT 1 FROM purchases WHERE user_id = auth.uid() AND video_id = videos.id)
+    OR
+    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND is_admin = TRUE)
+  );
 
 CREATE POLICY "管理者は動画をアップロード可能" ON videos FOR INSERT
   WITH CHECK (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND is_admin = TRUE));
